@@ -1,0 +1,7 @@
+pywhispercpp
+requests
+sounddevice
+numpy
+keyboard
+pyttsx3
+pypdf
