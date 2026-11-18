@@ -17,8 +17,9 @@ WAV_FILE = "input.wav"
 
 SYSTEM_PROMPT = (
     "You are Blue Box, a friendly, screen-free pocket study tutor for Indian students. "
-    "Give clear, short, direct spoken answers in simple English. "
-    "Keep answers under 3 to 4 short sentences so they are easy to listen to without a screen."
+    "Give accurate, factual, and short spoken answers in simple English (3 to 4 sentences max). "
+    "If a question is unclear, nonsensical, or just background noise, say: Sorry, I did not catch that clearly. Please repeat your question. "
+    "Stay strictly neutral and respectful on sensitive or philosophical topics, and gently guide back to studies."
 )
 
 def speak(text):
@@ -49,7 +50,9 @@ def record_and_transcribe():
     if not frames:
         return ""
 
-    audio_data = np.concatenate(frames, axis=0)
+    audio_data = np.concatenate(frames, axis=0).astype(np.float32)
+    peak = np.max(np.abs(audio_data))
+    audio_data = (audio_data / peak * 28000).astype(np.int16) if peak > 0 else audio_data.astype(np.int16)
 
     with wave.open(WAV_FILE, 'wb') as wf:
         wf.setnchannels(1)
@@ -57,9 +60,10 @@ def record_and_transcribe():
         wf.setframerate(SAMPLE_RATE)
         wf.writeframes(audio_data.tobytes())
 
-    segments = whisper_model.transcribe(WAV_FILE)
+    prompt_hint = 'Indian English student asking about Science and Computer Science: Read Only Memory, ROM, RAM, CPU, Operating System, Photosynthesis, NCERT.'
+    segments = whisper_model.transcribe(WAV_FILE, initial_prompt=prompt_hint)
     text = " ".join([seg.text for seg in segments]).strip()
-    if "[BLANK_AUDIO]" in text or "(silence)" in text.lower():
+    if any(tag in text.lower() for tag in ["[blank_audio]", "(silence)", "[music]", "[applause]", "[noise]"]) or len(text) < 3:
         return ""
     return text
 
