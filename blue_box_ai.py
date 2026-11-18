@@ -10,16 +10,16 @@ from pywhispercpp.model import Model
 print("🔵 Booting Blue Box Offline AI (Whisper Engine)...")
 
 # Pehli baar mein 142MB 'base.en' model auto-download hoga, uske baad 100% offline
-whisper_model = Model('base.en', print_realtime=False, print_progress=False)
+whisper_model = Model('small', print_realtime=False, print_progress=False)
 
 SAMPLE_RATE = 16000
 WAV_FILE = "input.wav"
 
 SYSTEM_PROMPT = (
     "You are Blue Box, a friendly, screen-free pocket study tutor for Indian students. "
-    "Give accurate, factual, and short spoken answers in simple English (3 to 4 sentences max). "
-    "If a question is unclear, nonsensical, or just background noise, say: Sorry, I did not catch that clearly. Please repeat your question. "
-    "Stay strictly neutral and respectful on sensitive or philosophical topics, and gently guide back to studies."
+    "Understand English, Hindi, and Hinglish questions. Reply in the same language style the student uses (simple English or easy Hinglish using Roman script so text-to-speech reads it clearly). "
+    "Keep answers accurate, factual, and under 3 to 4 short sentences. "
+    "If a question is unclear or noise, say: Sorry, I did not catch that clearly. Please repeat your question."
 )
 
 def speak(text):
@@ -60,7 +60,7 @@ def record_and_transcribe():
         wf.setframerate(SAMPLE_RATE)
         wf.writeframes(audio_data.tobytes())
 
-    prompt_hint = 'Indian English student asking about Science and Computer Science: Read Only Memory, ROM, RAM, CPU, Operating System, Photosynthesis, NCERT.'
+    prompt_hint = 'Indian student asking in English or Hinglish: Read Only Memory kya hota hai, ROM, RAM, CPU, Operating System, Photosynthesis, NCERT Science.'
     segments = whisper_model.transcribe(WAV_FILE, initial_prompt=prompt_hint)
     text = " ".join([seg.text for seg in segments]).strip()
     if any(tag in text.lower() for tag in ["[blank_audio]", "(silence)", "[music]", "[applause]", "[noise]"]) or len(text) < 3:
