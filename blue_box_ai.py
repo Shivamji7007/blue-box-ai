@@ -112,6 +112,10 @@ while True:
         continue
 
     print(f"🗣️ You asked: {user_text}")
+    if any(cmd in user_text.lower() for cmd in ["new topic", "clear memory", "reset memory", "naya topic", "forget everything"]):
+        chat_history.clear()
+        speak("Memory cleared. Ready for a new topic!")
+        continue
     print("🧠 Thinking offline...")
     try:
         answer = ask_offline_brain(user_text)
