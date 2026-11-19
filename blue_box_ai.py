@@ -23,10 +23,23 @@ SYSTEM_PROMPT = (
 )
 
 def speak(text):
-    print(f"\n🔊 Blue Box: {text}\n")
+    clean_text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+    print(f"\n🔊 Blue Box: {clean_text}\n")
     engine = pyttsx3.init()
-    engine.setProperty('rate', 165)
-    engine.say(text)
+    voices = engine.getProperty('voices')
+    chosen = None
+    for key in ["heera", "ravi", "india", "hazel", "zira"]:
+        for v in voices:
+            if key in v.name.lower():
+                chosen = v.id
+                break
+        if chosen:
+            break
+    if chosen:
+        engine.setProperty('voice', chosen)
+    engine.setProperty('rate', 148)
+    engine.setProperty('volume', 1.0)
+    engine.say(clean_text)
     engine.runAndWait()
     engine.stop()
 
