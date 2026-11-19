@@ -87,9 +87,31 @@ def record_and_transcribe():
 
 chat_history = []
 
+import glob, pathlib, re
+
+def search_notes(query):
+    words = set(re.findall(r'\w+', query.lower())) - {'what','is','the','of','in','a','an','how','why','explain','define','kya','hai','ko','se'}
+    if not words:
+        return ""
+    best_chunk, best_score = "", 0
+    for fp in glob.glob("notes/*.txt") + glob.glob("notes/*.md"):
+        text = pathlib.Path(fp).read_text(encoding="utf-8", errors="ignore")
+        for chunk in text.split("\n\n"):
+            c_words = set(re.findall(r'\w+', chunk.lower()))
+            score = len(words & c_words)
+            if score > best_score:
+                best_score, best_chunk = score, chunk.strip()
+    return best_chunk if best_score >= 1 else ""
+
 def ask_offline_brain(question):
     global chat_history
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}] + chat_history[-6:] + [{"role": "user", "content": question}]
+    context = search_notes(question)
+    if context:
+        print(f"Matched Note: {context[:70]}...")
+        prompt_text = f"Answer strictly using this book note if relevant:\n{context}\n\nQuestion: {question}"
+    else:
+        prompt_text = question
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}] + chat_history[-6:] + [{"role": "user", "content": prompt_text}]
     response = requests.post(
         "http://localhost:11434/api/chat",
         json={

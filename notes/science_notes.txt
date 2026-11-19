@@ -1,0 +1,5 @@
+Ohm's Law: At constant temperature, the current flowing through a conductor is directly proportional to the potential difference across its ends. Formula: V = I * R, where R is resistance measured in Ohms.
+
+Photosynthesis: Green plants prepare their own food from carbon dioxide and water in the presence of sunlight and chlorophyll, releasing oxygen as a byproduct.
+
+Virtual Memory: A memory management technique where secondary memory (disk) is used as if it were a part of main memory (RAM), allowing execution of processes that may not be completely in physical memory.
