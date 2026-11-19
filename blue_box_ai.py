@@ -145,6 +145,9 @@ while True:
     if any(cmd in user_text.lower() for cmd in ["repeat", "say again", "say that again", "dobara bolo", "phir se bolo"]):
         speak(last_reply if last_reply else "I have not answered anything yet.")
         continue
+    if any(cmd in user_text.lower() for cmd in ["goodbye", "bye bye", "exit", "quit", "stop listening", "band karo", "band kar do"]):
+        speak("Goodbye! Keep studying and stay focused.")
+        break
     print("🧠 Thinking offline...")
     try:
         answer = ask_offline_brain(user_text)
