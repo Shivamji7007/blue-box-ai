@@ -148,6 +148,9 @@ while True:
     if any(cmd in user_text.lower() for cmd in ["goodbye", "bye bye", "exit", "quit", "stop listening", "band karo", "band kar do"]):
         speak("Goodbye! Keep studying and stay focused.")
         break
+    if any(cmd in user_text.lower() for cmd in ["help", "what can you do", "voice commands", "commands", "madad"]):
+        speak("Ask any study question in English or Hindi. Voice commands are: say new topic to clear memory, change voice to switch between Heera and Ravi, speak slower or speak faster to adjust speed, repeat that to hear the last answer again, and goodbye to exit.")
+        continue
     print("🧠 Thinking offline...")
     try:
         answer = ask_offline_brain(user_text)
