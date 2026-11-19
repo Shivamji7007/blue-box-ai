@@ -22,13 +22,16 @@ SYSTEM_PROMPT = (
     "If a question is unclear or noise, say: Sorry, I did not catch that clearly. Please repeat your question."
 )
 
+current_voice = "heera"
+
 def speak(text):
     clean_text = text.replace("**", "").replace("*", "").replace("#", "").strip()
     print(f"\n🔊 Blue Box: {clean_text}\n")
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
     chosen = None
-    for key in ["heera", "ravi", "india", "hazel", "zira"]:
+    priority = [current_voice, "heera", "ravi", "india", "hazel", "zira"]
+    for key in priority:
         for v in voices:
             if key in v.name.lower():
                 chosen = v.id
@@ -115,6 +118,15 @@ while True:
     if any(cmd in user_text.lower() for cmd in ["new topic", "clear memory", "reset memory", "naya topic", "forget everything"]):
         chat_history.clear()
         speak("Memory cleared. Ready for a new topic!")
+        continue
+    if any(cmd in user_text.lower() for cmd in ["change voice", "switch voice", "male voice", "female voice", "use ravi", "use heera", "awaaz badlo"]):
+        if "ravi" in user_text.lower() or "male" in user_text.lower():
+            current_voice = "ravi"
+        elif "heera" in user_text.lower() or "female" in user_text.lower():
+            current_voice = "heera"
+        else:
+            current_voice = "ravi" if current_voice == "heera" else "heera"
+        speak(f"Voice switched to {current_voice.capitalize()}!")
         continue
     print("🧠 Thinking offline...")
     try:
