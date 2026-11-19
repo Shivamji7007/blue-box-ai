@@ -23,6 +23,7 @@ SYSTEM_PROMPT = (
 )
 
 current_voice = "heera"
+speech_rate = 148
 
 def speak(text):
     clean_text = text.replace("**", "").replace("*", "").replace("#", "").strip()
@@ -40,7 +41,7 @@ def speak(text):
             break
     if chosen:
         engine.setProperty('voice', chosen)
-    engine.setProperty('rate', 148)
+    engine.setProperty('rate', speech_rate)
     engine.setProperty('volume', 1.0)
     engine.say(clean_text)
     engine.runAndWait()
@@ -127,6 +128,18 @@ while True:
         else:
             current_voice = "ravi" if current_voice == "heera" else "heera"
         speak(f"Voice switched to {current_voice.capitalize()}!")
+        continue
+    if any(cmd in user_text.lower() for cmd in ["speak slower", "slower", "slow down", "dheere bolo", "dheere"]):
+        speech_rate = max(110, speech_rate - 20)
+        speak(f"Okay, speaking slower now at speed {speech_rate}.")
+        continue
+    if any(cmd in user_text.lower() for cmd in ["speak faster", "faster", "speed up", "tez bolo", "jaldi bolo"]):
+        speech_rate = min(210, speech_rate + 20)
+        speak(f"Okay, speaking faster now at speed {speech_rate}.")
+        continue
+    if any(cmd in user_text.lower() for cmd in ["normal speed", "reset speed"]):
+        speech_rate = 148
+        speak("Speed reset to normal.")
         continue
     print("🧠 Thinking offline...")
     try:
