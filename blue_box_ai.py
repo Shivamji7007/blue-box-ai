@@ -80,20 +80,25 @@ def record_and_transcribe():
         return ""
     return text
 
+chat_history = []
+
 def ask_offline_brain(question):
+    global chat_history
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}] + chat_history[-6:] + [{"role": "user", "content": question}]
     response = requests.post(
         "http://localhost:11434/api/chat",
         json={
             "model": "qwen2.5:1.5b",
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": question}
-            ],
+            "messages": messages,
             "stream": False,
             "options": {"temperature": 0.2, "num_predict": 150}
         }
     )
-    return response.json()["message"]["content"].strip()
+    reply = response.json()["message"]["content"].strip()
+    chat_history.append({"role": "user", "content": question})
+    chat_history.append({"role": "assistant", "content": reply})
+    chat_history = chat_history[-6:]
+    return reply
 
 speak("Blue Box is ready with Whisper voice engine. Hold spacebar and ask your question.")
 
