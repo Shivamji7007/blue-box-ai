@@ -24,6 +24,7 @@ SYSTEM_PROMPT = (
 
 current_voice = "heera"
 speech_rate = 148
+last_reply = ""
 
 def speak(text):
     clean_text = text.replace("**", "").replace("*", "").replace("#", "").strip()
@@ -141,9 +142,13 @@ while True:
         speech_rate = 148
         speak("Speed reset to normal.")
         continue
+    if any(cmd in user_text.lower() for cmd in ["repeat", "say again", "say that again", "dobara bolo", "phir se bolo"]):
+        speak(last_reply if last_reply else "I have not answered anything yet.")
+        continue
     print("🧠 Thinking offline...")
     try:
         answer = ask_offline_brain(user_text)
+        last_reply = answer
         speak(answer)
     except Exception as e:
         print("Error:", e)
